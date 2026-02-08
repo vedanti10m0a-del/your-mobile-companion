@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Camera, CalendarPlus, Newspaper, TrendingUp, Leaf } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import Header from "@/components/layout/Header";
 import BottomNavBar from "@/components/layout/BottomNavBar";
 import SideMenu from "@/components/layout/SideMenu";
 import PriceCard from "@/components/PriceCard";
-import { MOCK_SCRAP_PRICES } from "@/lib/scrapData";
+import { usePrices } from "@/hooks/usePrices";
 
 const ecoTips = [
   "♻️ Sort your scrap before pickup for better rates!",
@@ -20,9 +20,13 @@ const ecoTips = [
 const Home = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { prices } = usePrices();
   
   // Get top 4 trending prices
-  const trendingPrices = MOCK_SCRAP_PRICES.filter(p => p.trend === "up").slice(0, 4);
+  const trendingPrices = useMemo(() => 
+    prices.filter(p => p.trend === "up").slice(0, 4),
+    [prices]
+  );
 
   return (
     <div className="min-h-screen bg-background pb-20">
