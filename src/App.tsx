@@ -8,6 +8,9 @@ import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
 import Scan from "./pages/Scan";
 import Prices from "./pages/Prices";
+import Booking from "./pages/Booking";
+import Orders from "./pages/Orders";
+import Wallet from "./pages/Wallet";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,11 +50,13 @@ const App = () => (
           <Route path="/scan" element={<Scan />} />
           <Route path="/prices" element={<Prices />} />
           
-          {/* Placeholder routes for Phase 3 */}
-          <Route path="/booking" element={<PlaceholderPage title="Book Pickup" />} />
-          <Route path="/orders" element={<PlaceholderPage title="Orders" />} />
+          {/* Phase 3 screens */}
+          <Route path="/booking" element={<Booking />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/wallet" element={<Wallet />} />
+          
+          {/* Placeholder for Phase 4 */}
           <Route path="/profile" element={<PlaceholderPage title="Profile" />} />
-          <Route path="/wallet" element={<PlaceholderPage title="Wallet" />} />
           
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
