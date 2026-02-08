@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
+import { useAuth } from "@/hooks/useAuth";
 import BottomNavBar from "@/components/layout/BottomNavBar";
 import {
   Select,
@@ -40,6 +41,7 @@ import {
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [settings, setSettings] = useState({
     pushNotifications: true,
     emailNotifications: true,
@@ -56,9 +58,9 @@ const Settings = () => {
     }));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("scrapx_onboarded");
-    navigate("/");
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth", { replace: true });
   };
 
   const notificationSettings = [
