@@ -17,7 +17,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
@@ -43,10 +42,6 @@ interface MenuItem {
 const SideMenu = ({ open, onOpenChange }: SideMenuProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signOut } = useAuth();
-
-  const userEmail = user?.email ?? "";
-  const userInitials = userEmail ? userEmail.slice(0, 2).toUpperCase() : "??";
 
   const mainMenuItems: MenuItem[] = [
     { icon: Home, label: "Home", path: "/home" },
@@ -69,10 +64,10 @@ const SideMenu = ({ open, onOpenChange }: SideMenuProps) => {
     onOpenChange(false);
   };
 
-  const handleLogout = async () => {
-    await signOut();
+  const handleLogout = () => {
+    localStorage.removeItem("scrapx_onboarded");
+    navigate("/");
     onOpenChange(false);
-    navigate("/auth", { replace: true });
   };
 
   const renderMenuItem = (item: MenuItem, index: number) => {
@@ -117,11 +112,11 @@ const SideMenu = ({ open, onOpenChange }: SideMenuProps) => {
             <Avatar className="h-14 w-14 border-2 border-primary">
               <AvatarImage src="" />
               <AvatarFallback className="bg-primary text-primary-foreground text-lg font-bold">
-                {userInitials}
+                RS
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
-              <SheetTitle className="text-left text-lg truncate">{userEmail || "User"}</SheetTitle>
+            <div className="flex-1">
+              <SheetTitle className="text-left text-lg">Rahul Sharma</SheetTitle>
               <p className="text-sm text-muted-foreground text-left">
                 Eco Warrior
               </p>

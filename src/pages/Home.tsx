@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Camera, CalendarPlus, Newspaper, TrendingUp, Leaf } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/layout/Header";
@@ -20,9 +19,7 @@ const ecoTips = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const displayName = user?.email?.split("@")[0] ?? "Eco Warrior";
   
   // Get top 4 trending prices
   const trendingPrices = MOCK_SCRAP_PRICES.filter(p => p.trend === "up").slice(0, 4);
@@ -47,7 +44,7 @@ const Home = () => {
         >
           <div className="flex items-center gap-2 mb-1">
             <h2 className="text-xl font-heading font-semibold text-foreground">
-              Hello, {displayName}!
+              Hello, Eco Warrior!
             </h2>
             <motion.span
               animate={{ rotate: [0, 15, -15, 0] }}
