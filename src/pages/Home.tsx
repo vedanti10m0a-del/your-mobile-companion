@@ -9,6 +9,7 @@ import BottomNavBar from "@/components/layout/BottomNavBar";
 import SideMenu from "@/components/layout/SideMenu";
 import PriceCard from "@/components/PriceCard";
 import { usePrices } from "@/hooks/usePrices";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ecoTips = [
   "♻️ Sort your scrap before pickup for better rates!",
@@ -20,7 +21,10 @@ const ecoTips = [
 const Home = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useAuth();
   const { prices } = usePrices();
+  
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Eco Warrior";
   
   // Get top 4 trending prices
   const trendingPrices = useMemo(() => 
@@ -48,7 +52,7 @@ const Home = () => {
         >
           <div className="flex items-center gap-2 mb-1">
             <h2 className="text-xl font-heading font-semibold text-foreground">
-              Hello, Eco Warrior!
+              Hello, {displayName}!
             </h2>
             <motion.span
               animate={{ rotate: [0, 15, -15, 0] }}

@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import BottomNavBar from "@/components/layout/BottomNavBar";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +40,7 @@ interface Address {
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [addresses, setAddresses] = useState<Address[]>([
     {
@@ -56,10 +58,10 @@ const Profile = () => {
   ]);
 
   const [profile, setProfile] = useState({
-    name: "Rahul Sharma",
-    email: "rahul.sharma@email.com",
-    phone: "+91 98765 43210",
-    avatar: "",
+    name: user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    avatar: user?.user_metadata?.avatar_url || "",
   });
 
   const stats = {
