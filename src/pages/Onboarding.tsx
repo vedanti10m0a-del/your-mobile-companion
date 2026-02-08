@@ -60,7 +60,7 @@ const Onboarding = () => {
 
   const handleGetStarted = () => {
     localStorage.setItem("scrapx_onboarded", "true");
-    navigate("/home", { replace: true });
+    navigate("/auth", { replace: true });
   };
 
   const currentData = slides[currentSlide];

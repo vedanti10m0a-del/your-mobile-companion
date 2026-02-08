@@ -14,6 +14,7 @@ import {
   X
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,6 +43,7 @@ interface MenuItem {
 const SideMenu = ({ open, onOpenChange }: SideMenuProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { signOut } = useAuth();
 
   const mainMenuItems: MenuItem[] = [
     { icon: Home, label: "Home", path: "/home" },
@@ -64,9 +66,9 @@ const SideMenu = ({ open, onOpenChange }: SideMenuProps) => {
     onOpenChange(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("scrapx_onboarded");
-    navigate("/");
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth", { replace: true });
     onOpenChange(false);
   };
 

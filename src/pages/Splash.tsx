@@ -16,7 +16,7 @@ const Splash = () => {
       // Check if user has completed onboarding
       const hasOnboarded = localStorage.getItem("scrapx_onboarded");
       if (hasOnboarded) {
-        navigate("/home", { replace: true });
+        navigate("/auth", { replace: true });
       } else {
         navigate("/onboarding", { replace: true });
       }
