@@ -37,9 +37,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Settings = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [settings, setSettings] = useState({
     pushNotifications: true,
     emailNotifications: true,
@@ -56,9 +58,9 @@ const Settings = () => {
     }));
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("scrapx_onboarded");
-    navigate("/");
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth", { replace: true });
   };
 
   const notificationSettings = [
