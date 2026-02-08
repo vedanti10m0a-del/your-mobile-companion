@@ -3,3 +3,15 @@ project_id = "kdfdwvuqdmjgecuqrobd"
 [functions.detect-material]
 enabled = true
 verify_jwt = false
+
+[functions.create-order]
+enabled = true
+verify_jwt = false
+
+[functions.get-prices]
+enabled = true
+verify_jwt = false
+
+[functions.assign-vendor]
+enabled = true
+verify_jwt = false
