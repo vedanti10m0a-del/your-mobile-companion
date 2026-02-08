@@ -21,6 +21,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useCamera } from "@/hooks/useCamera";
 import { useToast } from "@/hooks/use-toast";
 import { MaterialDetectionResult } from "@/lib/scrapData";
+import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/layout/Header";
 import BottomNavBar from "@/components/layout/BottomNavBar";
 
@@ -83,6 +84,27 @@ const Scan = () => {
 
       const data: MaterialDetectionResult = await response.json();
       setResult(data);
+
+      // Save scan result to database
+      if (data.detected) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await (supabase as any).from("ai_scan_results").insert({
+              user_id: user.id,
+              material_name: data.material,
+              category: data.category,
+              confidence: data.confidence,
+              detected_price: data.pricePerKg,
+              recycling_method: data.recyclingMethod,
+              environmental_impact: data.environmentalImpact,
+            });
+          }
+        } catch (saveErr) {
+          console.error("Failed to save scan result:", saveErr);
+          // Non-blocking — don't interrupt UX
+        }
+      }
     } catch (err) {
       console.error("Analysis error:", err);
       toast({

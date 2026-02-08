@@ -1,19 +1,21 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, TrendingUp, Filter } from "lucide-react";
+import { Search, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/layout/Header";
 import BottomNavBar from "@/components/layout/BottomNavBar";
 import PriceCard from "@/components/PriceCard";
-import { SCRAP_CATEGORIES, MOCK_SCRAP_PRICES } from "@/lib/scrapData";
+import { SCRAP_CATEGORIES } from "@/lib/scrapData";
+import { usePrices } from "@/hooks/usePrices";
 
 const Prices = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const { prices, loading } = usePrices();
 
   const filteredPrices = useMemo(() => {
-    return MOCK_SCRAP_PRICES.filter((item) => {
+    return prices.filter((item) => {
       const matchesSearch = item.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -21,11 +23,11 @@ const Prices = () => {
         selectedCategory === "all" || item.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, prices]);
 
   const categoryStats = useMemo(() => {
     const stats: Record<string, { count: number; avgPrice: number }> = {};
-    MOCK_SCRAP_PRICES.forEach((item) => {
+    prices.forEach((item) => {
       if (!stats[item.category]) {
         stats[item.category] = { count: 0, avgPrice: 0 };
       }
@@ -36,7 +38,7 @@ const Prices = () => {
       stats[cat].avgPrice = Math.round(stats[cat].avgPrice / stats[cat].count);
     });
     return stats;
-  }, []);
+  }, [prices]);
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -52,7 +54,7 @@ const Prices = () => {
             </h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            Updated prices for all scrap categories
+            {loading ? "Loading live prices..." : "Updated prices for all scrap categories"}
           </p>
         </div>
 
