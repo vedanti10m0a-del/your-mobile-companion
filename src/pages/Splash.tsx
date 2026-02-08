@@ -2,23 +2,25 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Recycle, Leaf } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Splash = () => {
   const navigate = useNavigate();
+  const { session, loading } = useAuth();
   const [showTagline, setShowTagline] = useState(false);
 
   useEffect(() => {
-    // Show tagline after logo animation
     const taglineTimer = setTimeout(() => setShowTagline(true), 800);
-    
-    // Navigate to onboarding after splash
+
     const navigationTimer = setTimeout(() => {
-      // Check if user has completed onboarding
+      if (loading) return;
       const hasOnboarded = localStorage.getItem("scrapx_onboarded");
-      if (hasOnboarded) {
+      if (!hasOnboarded) {
+        navigate("/onboarding", { replace: true });
+      } else if (session) {
         navigate("/home", { replace: true });
       } else {
-        navigate("/onboarding", { replace: true });
+        navigate("/auth", { replace: true });
       }
     }, 2500);
 

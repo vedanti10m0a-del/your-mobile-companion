@@ -3,8 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Splash from "./pages/Splash";
 import Onboarding from "./pages/Onboarding";
+import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import Scan from "./pages/Scan";
 import Prices from "./pages/Prices";
@@ -21,38 +24,33 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Entry point - Splash screen */}
-          <Route path="/" element={<Splash />} />
-          
-          {/* Onboarding flow */}
-          <Route path="/onboarding" element={<Onboarding />} />
-          
-          {/* Main app screens */}
-          <Route path="/home" element={<Home />} />
-          <Route path="/scan" element={<Scan />} />
-          <Route path="/prices" element={<Prices />} />
-          
-          {/* Business flow screens */}
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/wallet" element={<Wallet />} />
-          
-          {/* User management screens */}
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/help" element={<Help />} />
-          
-          {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Splash />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/auth" element={<Auth />} />
+
+            {/* Protected routes */}
+            <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/scan" element={<ProtectedRoute><Scan /></ProtectedRoute>} />
+            <Route path="/prices" element={<ProtectedRoute><Prices /></ProtectedRoute>} />
+            <Route path="/booking" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+            <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+            <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
