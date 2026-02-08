@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import {
@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   Plus,
   Minus,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,8 @@ import Header from "@/components/layout/Header";
 import BottomNavBar from "@/components/layout/BottomNavBar";
 import { SCRAP_CATEGORIES } from "@/lib/scrapData";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const TIME_SLOTS = [
   { id: "morning", label: "Morning", time: "9 AM – 12 PM", icon: "🌅" },
@@ -43,13 +46,24 @@ interface ScrapItem {
 
 const Booking = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [address, setAddress] = useState("");
   const [landmark, setLandmark] = useState("");
   const [date, setDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState("");
-  const [scrapItems, setScrapItems] = useState<ScrapItem[]>([]);
+  const [scrapItems, setScrapItems] = useState<ScrapItem[]>(() => {
+    // Pre-select category if coming from AI scan
+    const state = location.state as { category?: string; material?: string } | null;
+    if (state?.category) {
+      const cat = SCRAP_CATEGORIES.find(c => c.id === state.category);
+      if (cat) return [{ categoryId: cat.id, label: cat.label, icon: cat.icon, quantity: 1 }];
+    }
+    return [];
+  });
   const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const bookableCategories = SCRAP_CATEGORIES.filter((c) => c.id !== "all");
 
@@ -80,12 +94,39 @@ const Booking = () => {
     return true;
   };
 
-  const handleConfirm = () => {
-    toast({
-      title: "Pickup Booked! 🎉",
-      description: `Scheduled for ${date ? format(date, "PPP") : ""} (${TIME_SLOTS.find((t) => t.id === timeSlot)?.time}). We'll notify you when a vendor is assigned.`,
-    });
-    navigate("/orders");
+  const handleConfirm = async () => {
+    if (!user || !date) return;
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("create-order", {
+        body: {
+          address: `${address}${landmark ? `, Near ${landmark}` : ""}`,
+          scrap_category: scrapItems[0]?.categoryId || "other",
+          estimated_weight: scrapItems.reduce((sum, i) => sum + i.quantity, 0),
+          scheduled_date: format(date, "yyyy-MM-dd"),
+          scheduled_time: TIME_SLOTS.find((t) => t.id === timeSlot)?.time || "",
+          notes,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Pickup Booked! 🎉",
+        description: `Scheduled for ${format(date, "PPP")} (${TIME_SLOTS.find((t) => t.id === timeSlot)?.time}). We'll notify you when a vendor is assigned.`,
+      });
+      navigate("/orders");
+    } catch (err) {
+      console.error("Booking error:", err);
+      toast({
+        title: "Booking failed",
+        description: err instanceof Error ? err.message : "Could not create order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const totalSteps = 4;
@@ -461,9 +502,14 @@ const Booking = () => {
             <Button
               className="h-12 rounded-xl flex-1 gradient-primary text-primary-foreground"
               onClick={handleConfirm}
+              disabled={isSubmitting}
             >
-              <CheckCircle2 className="h-4 w-4 mr-2" />
-              Confirm Pickup
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+              )}
+              {isSubmitting ? "Booking..." : "Confirm Pickup"}
             </Button>
           )}
         </div>
