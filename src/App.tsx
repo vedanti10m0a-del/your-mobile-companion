@@ -11,26 +11,13 @@ import Prices from "./pages/Prices";
 import Booking from "./pages/Booking";
 import Orders from "./pages/Orders";
 import Wallet from "./pages/Wallet";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Notifications from "./pages/Notifications";
+import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
-
-// Placeholder component for routes to be implemented in Phase 3
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-    <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-4">
-      <span className="text-2xl font-heading font-bold text-primary-foreground">
-        {title.charAt(0)}
-      </span>
-    </div>
-    <h1 className="text-2xl font-heading font-bold text-foreground mb-2">
-      {title}
-    </h1>
-    <p className="text-muted-foreground text-center">
-      Coming in Phase 3
-    </p>
-  </div>
-);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -50,13 +37,16 @@ const App = () => (
           <Route path="/scan" element={<Scan />} />
           <Route path="/prices" element={<Prices />} />
           
-          {/* Phase 3 screens */}
+          {/* Business flow screens */}
           <Route path="/booking" element={<Booking />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/wallet" element={<Wallet />} />
           
-          {/* Placeholder for Phase 4 */}
-          <Route path="/profile" element={<PlaceholderPage title="Profile" />} />
+          {/* User management screens */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/help" element={<Help />} />
           
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
