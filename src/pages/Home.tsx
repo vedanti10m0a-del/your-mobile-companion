@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Camera, CalendarPlus, Newspaper, TrendingUp, Leaf } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -5,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Header from "@/components/layout/Header";
 import BottomNavBar from "@/components/layout/BottomNavBar";
+import SideMenu from "@/components/layout/SideMenu";
 import PriceCard from "@/components/PriceCard";
 import { MOCK_SCRAP_PRICES } from "@/lib/scrapData";
 
@@ -17,13 +19,21 @@ const ecoTips = [
 
 const Home = () => {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
   
   // Get top 4 trending prices
   const trendingPrices = MOCK_SCRAP_PRICES.filter(p => p.trend === "up").slice(0, 4);
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <Header title="ScrapX" showNotification />
+      <Header 
+        title="ScrapX" 
+        showMenu 
+        showNotification 
+        onMenuClick={() => setMenuOpen(true)}
+        onNotificationClick={() => navigate("/notifications")}
+      />
+      <SideMenu open={menuOpen} onOpenChange={setMenuOpen} />
 
       <main className="px-4 py-6 max-w-md mx-auto">
         {/* Greeting */}
